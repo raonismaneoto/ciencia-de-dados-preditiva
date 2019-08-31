@@ -1,4 +1,11 @@
 from numpy import *
+import matplotlib.pyplot as plt
+
+def plot(rss):
+	x = [elem[0] for elem in rss]
+	y = [elem[1] for elem in rss]
+	plt.scatter(x, y)
+	plt.show()
 
 def compute_error_for_given_points(b, m, points):
 	total_error = 0
@@ -22,22 +29,28 @@ def step_gradient(current_b, current_m, points, learning_rate):
 	return [new_b, new_m]
 
 
-def gradient_descent_runner(points, starting_b, starting_m, learning_rate, num_iterations):
+def gradient_descent_runner(points, starting_b, starting_m, learning_rate, epsilon):
 	b = starting_b
 	m = starting_m
-	for i in range(num_iterations):
+	rss_for_iterations = []
+	iterations = 1
+	current_rss = compute_error_for_given_points(b, m, points)
+	while current_rss >= epsilon:
 		b, m = step_gradient(b, m, array(points), learning_rate)
+		rss_for_iterations.append((iterations, current_rss))
+		current_rss = compute_error_for_given_points(b, m, points)
+		iterations += 1
+	plot(rss_for_iterations)
 	return [b, m]
 
 def run():
-	points = genfromtext('data.csv', delimeter=',')
+	points = genfromtxt('data.csv', delimiter=",")
 	learning_rate = 0.0001
 	initial_b = 0
 	initial_m = 0
-	num_iterations = 1000
-	[b, m] = gradient_descent_runner(points, initial_b, initial_m, learning_rate, num_iterations)
+	epsilon = 30
+	[b, m] = gradient_descent_runner(points, initial_b, initial_m, learning_rate, epsilon)
 	print(b)
 	print(m)
 
-if __name__ == 'main':
-	run()
+run()
