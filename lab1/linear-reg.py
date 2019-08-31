@@ -66,6 +66,14 @@ def gradient_descent_runner(points, starting_b, starting_m, learning_rate, epsil
 	plot(rss_for_iterations)
 	return [b, m]
 
+model = {}
+
+def predict(x, hard=False):
+	if hard:
+		print(model['bh'] + model['mh']*x)
+	else:
+		print(model['b'] + model['m']*x)
+
 def run():
 	points = genfromtxt('data.csv', delimiter=",")
 	learning_rate = 0.001
@@ -76,8 +84,17 @@ def run():
 	[b, m] = gradient_descent_runner(points, initial_b, initial_m, learning_rate, epsilon)
 	print(b)
 	print(m) 
-	[b, m] = get_fast(points)
-	print(b)
-	print(m)
+	[bh, mh] = get_fast(points)
+	print(bh)
+	print(mh)
+	model['b'] = b
+	model['m'] = m
+	model['bh'] = bh
+	model['mh'] = mh
+
+	while True:
+		hard = True
+		x = int(input("which value do u want to predicct?"))
+		predict(x, not hard)
 
 run()
