@@ -7,6 +7,29 @@ def plot(rss):
 	plt.scatter(x, y)
 	plt.show()
 
+def get_fast(points):
+	m = 0
+	b = 0
+	x_mean = 0
+	y_mean = 0
+	for i in range(len(points)):
+		x = points[i, 0]
+		y = points[i, 1]
+		x_mean += x
+		y_mean += y
+	x_mean = x_mean/float(len(points))
+	y_mean = y_mean/float(len(points))
+	up_side = 0
+	down_side = 0
+	for i in range(len(points)):
+		x = points[i, 0]
+		y = points[i, 1]
+		up_side += (x - x_mean)*(y-y_mean)
+		down_side += (x - x_mean)**2
+	m = float(up_side)/float(down_side)
+	b = y_mean - m*x_mean
+	return [b, m]
+
 def compute_error_for_given_points(b, m, points):
 	total_error = 0
 	for i in range(0, len(points)):
@@ -45,11 +68,15 @@ def gradient_descent_runner(points, starting_b, starting_m, learning_rate, epsil
 
 def run():
 	points = genfromtxt('data.csv', delimiter=",")
-	learning_rate = 0.0001
+	learning_rate = 0.001
 	initial_b = 0
 	initial_m = 0
-	epsilon = 30
+	# this seems to be a good value in comparison to the other limit method.
+	epsilon = 29.9
 	[b, m] = gradient_descent_runner(points, initial_b, initial_m, learning_rate, epsilon)
+	print(b)
+	print(m) 
+	[b, m] = get_fast(points)
 	print(b)
 	print(m)
 
